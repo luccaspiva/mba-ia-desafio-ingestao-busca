@@ -1,3 +1,12 @@
+import os
+from dotenv import load_dotenv
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_postgres import PGVector
+
+from ingest import store
+
+load_dotenv()
+
 PROMPT_TEMPLATE = """
 CONTEXTO:
 {contexto}
@@ -26,4 +35,13 @@ RESPONDA A "PERGUNTA DO USUÁRIO"
 """
 
 def search_prompt(question=None):
-    pass
+  results = store.similarity_search_with_score(question, k=3)
+
+  if not results:
+      return "Não tenho informações necessárias para responder sua pergunta."
+
+  context = "\n\n".join([f"Resposta (score: {score:.2f}): {doc.page_content.strip()}" for doc, score in results])
+
+  prompt = PROMPT_TEMPLATE.format(contexto=context, pergunta=question)
+
+  return prompt
