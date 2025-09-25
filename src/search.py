@@ -1,7 +1,6 @@
-import os
+from langchain.prompts import PromptTemplate
+from langchain.schema.runnable import RunnableLambda, RunnablePassthrough
 from dotenv import load_dotenv
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_postgres import PGVector
 
 from ingest import store
 
@@ -34,14 +33,32 @@ PERGUNTA DO USUÁRIO:
 RESPONDA A "PERGUNTA DO USUÁRIO"
 """
 
-def search_prompt(question=None):
-  results = store.similarity_search_with_score(question, k=3)
+def search_context(query):
+    """Função que busca no banco e retorna o contexto formatado"""
+    results = store.similarity_search_with_score(query, k=10)
+    
+    if not results:
+        return "Não encontrei informações relevantes no contexto fornecido."
 
-  if not results:
-      return "Não tenho informações necessárias para responder sua pergunta."
+    context = "\n\n".join([doc.page_content.strip() for doc, _ in results])
+    return context
 
-  context = "\n\n".join([f"Resposta (score: {score:.2f}): {doc.page_content.strip()}" for doc, score in results])
-
-  prompt = PROMPT_TEMPLATE.format(contexto=context, pergunta=question)
-
-  return prompt
+def search_prompt():
+    """Retorna uma chain do LangChain"""
+    
+    retriever = RunnableLambda(search_context)
+    
+    prompt = PromptTemplate(
+        input_variables=["contexto", "pergunta"],
+        template=PROMPT_TEMPLATE
+    )
+    
+    chain = (
+        {
+            "contexto": retriever,
+            "pergunta": RunnablePassthrough()
+        }
+        | prompt
+    )
+    
+    return chain
