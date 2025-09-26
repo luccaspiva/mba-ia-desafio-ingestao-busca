@@ -15,7 +15,7 @@ Criar um software capaz de:
 - **Framework**: LangChain
 - **Banco de dados**: PostgreSQL + pgVector
 - **Containerização**: Docker & Docker Compose
-- **LLM**: Google Gemini (gemini-1.5-flash)
+- **LLM**: Google Gemini (gemini-2.5-pro)
 - **Embeddings**: Google Generative AI Embeddings (models/embedding-001)
 
 ## 📁 Estrutura do Projeto
