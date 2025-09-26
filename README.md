@@ -61,11 +61,11 @@ pip install -r requirements.txt
 Crie um arquivo `.env` na raiz do projeto, baseando-se no arquivo `.env.example`:
 
 ```env
-GOOGLE_API_KEY={api-key}
-GOOGLE_EMBEDDING_MODEL='models/embedding-001'
-DATABASE_URL={database-url}
-PG_VECTOR_COLLECTION=gpt5_collection
-PDF_PATH={caminho/do/PDF.pdf}
+GOOGLE_API_KEY=<your_google_api_key>
+GOOGLE_EMBEDDING_MODEL=models/embedding-001
+PGVECTOR_URL=postgresql://user:password@localhost:5432/mydatabase
+PGVECTOR_COLLECTION=gpt5_collection
+PDF_PATH=./document.pdf
 ```
 
 ### 5. Adicionar PDF
